@@ -1,11 +1,14 @@
-﻿using IT120P.Models;
+﻿using IT120P.Data;
+using IT120P.Models;
 using IT120P.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IT120P.Controllers
 {
     [ApiController]
     [Route("api/devices")]
+    [Authorize]
     public class DeviceController : ControllerBase
     {
         private readonly DeviceDbContext _dbContext;
@@ -21,6 +24,7 @@ namespace IT120P.Controllers
 
         [HttpPost]
         [Route("login")]
+        [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest loginRequest)
         {
             if (_authService.Authenticate(loginRequest.Username, loginRequest.Password))
@@ -33,19 +37,24 @@ namespace IT120P.Controllers
             }
         }
 
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public IActionResult Register([FromBody] User user)
+        {
+            if (_authService.Register(user))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("devices")]
+        [AllowAnonymous]
         public IActionResult AddDevice([FromBody] Devices device)
         {
-            // get user id from token
-            int userId = int.Parse(User.Identity.Name);
-
-            // check if user has sufficient authority
-            var user = _userService.GetById(userId);
-            if (user.Autho != "admin")
-            {
-                return Unauthorized();
-            }
-
             // add device to database
             _dbContext.Devices.Add(device);
             _dbContext.SaveChanges();
@@ -54,18 +63,9 @@ namespace IT120P.Controllers
         }
 
         [HttpDelete("devices/{id}")]
+        [AllowAnonymous]
         public IActionResult DeleteDevice(int id)
         {
-            // get user id from token
-            int userId = int.Parse(User.Identity.Name);
-
-            // check if user has sufficient authority
-            var user = _userService.GetById(userId);
-            if (user.Autho != "admin")
-            {
-                return Unauthorized();
-            }
-
             // delete device from database
             var device = _dbContext.Devices.Find(id);
             if (device == null)

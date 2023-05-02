@@ -20,17 +20,21 @@ namespace IT120P.Services
 
         public bool Register(User user)
         {
-            var existingUser = _dbContext.Users.FirstOrDefault(u => u.Username == user.Username);
-            if (existingUser != null)
+            if (_dbContext.Users.Any(u => u.Username == user.Username))
             {
                 return false;
             }
+            else
+            {
+                _dbContext.Users.Add(user);
+                _dbContext.SaveChanges();
+                return true;
+            }
+        }
 
-            user.Autho = default;
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
-
-            return true;
+        internal bool Authenticate(User user, string password)
+        {
+            throw new NotImplementedException();
         }
     }
 }

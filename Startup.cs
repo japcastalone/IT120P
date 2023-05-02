@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IT120P.Data;
 using Microsoft.OpenApi.Models;
-
+using IT120P.Filters;
 
 namespace IT120P
 {
@@ -51,8 +51,14 @@ namespace IT120P
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "IT120P - DATABASE", Version = "v3.5b" });
             });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SchemaFilter<StringPropertySchemaFilter>();
+            });
+
 
         }
 

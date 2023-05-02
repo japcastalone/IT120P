@@ -1,7 +1,5 @@
 ﻿using IT120P.Data;
 using IT120P.Models;
-using System;
-using System.Linq;
 
 namespace IT120P.Services
 {
